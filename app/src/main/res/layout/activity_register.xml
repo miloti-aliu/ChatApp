@@ -3,10 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/app_bar_layout" />
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -46,15 +42,8 @@
             android:hint="Password"
             android:inputType="textPassword" />
 
-        <EditText
-            android:id="@+id/passwordConfirm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Confirm password"
-            android:inputType="textPassword" />
-
         <Button
-            android:id="@+id/create_account"
+            android:id="@+id/registerBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
