@@ -4,10 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/app_bar_layout" />
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -36,7 +32,7 @@
             android:layout_height="wrap_content"/>
 
         <EditText
-            android:id="@+id/password"
+            android:id="@+id/passwordLogin"
             android:hint="Password"
             android:layout_margin="8dp"
             android:padding="8dp"
@@ -46,7 +42,7 @@
             android:layout_height="wrap_content"/>
 
         <Button
-            android:id="@+id/you_login"
+            android:id="@+id/loginBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
