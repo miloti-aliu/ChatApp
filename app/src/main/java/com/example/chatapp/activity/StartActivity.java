@@ -40,8 +40,8 @@ public class StartActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        loginBtn.setOnClickListener(v -> startActivity(new Intent(StartActivity.this, LoginActivity.class)));
+        loginBtn.setOnClickListener(v -> startActivity(new Intent(StartActivity.this, com.example.chatapp.LoginActivity.class)));
 
-        registerBtn.setOnClickListener(v -> startActivity(new Intent(StartActivity.this, RegisterActivity.class)));
+        registerBtn.setOnClickListener(v -> startActivity(new Intent(StartActivity.this, com.example.chatapp.RegisterActivity.class)));
     }
 }
