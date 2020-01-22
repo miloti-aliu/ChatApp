@@ -60,11 +60,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void register_user(final String displayName, String email, String password) {
-
-        /*
-            From the instance of FirebaseAuth 'mAuth', we've called a function createUserWithEmailAndPassword(email, password)
-            and we've added a listener (.addOnCompleteListener(Task<AuthResult> task)) to know when the action is done successfully and when it fails
-        */
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(RegisterActivity.this, task -> {
                     if (task.isSuccessful()) {
@@ -72,25 +67,15 @@ public class RegisterActivity extends AppCompatActivity {
                         FirebaseUser currentUser = mAuth.getCurrentUser();
                         String userId = currentUser.getUid();
 
-                         /*
-                            If the response is successful then get UserId from FirebaseUser instance,
-                            and create a new reference in the database with nodes 'User/{USERID}'
-                          */
-
                         mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
 
                         HashMap<String, String> userMap = new HashMap<>();
                         userMap.put("id", userId);
                         userMap.put("name", displayName);
 
-                        /*
-                            Create a HashMap Object and fill it with required fields such as (name, status, image),
-                            and set HashMap object in the database.
-                         */
-
                         mDatabase.setValue(userMap).addOnCompleteListener(task1 -> {
                             if (task1.isSuccessful()) {
-                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 finish();

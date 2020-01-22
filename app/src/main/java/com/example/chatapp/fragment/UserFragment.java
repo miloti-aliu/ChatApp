@@ -41,9 +41,7 @@ public class UserFragment extends Fragment {
     }
 
 
-    public UserFragment() {
-        // Required empty public constructor
-    }
+    public UserFragment() {    }
 
 
     @Override
@@ -54,61 +52,7 @@ public class UserFragment extends Fragment {
         recyclerView = v.findViewById(R.id.user_recycler);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        // Inflate the layout for this fragment
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
-        FirebaseRecyclerOptions<User> firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<User>().setQuery(databaseReference.orderByKey(), User.class).build();
-
-        adapter = new FirebaseRecyclerAdapter<User, ViewHolder>(firebaseRecyclerOptions) {
-            @NonNull
-            @Override
-            public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view1 = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_users, parent, false);
-                return new ViewHolder(view1);
-            }
-
-            @NonNull
-            @Override
-            public User getItem(int position) {
-                return super.getItem(position);
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull final User user) {
-                holder.displayName.setText(user.getUsername());
-
-                holder.itemView.setOnClickListener(v1 -> {
-                    Intent intent = new Intent(getContext(), ChatDetailActivity.class);
-                    intent.putExtra("USER_OBJECT", user);
-                    startActivity(intent);
-                });
-            }
-        };
-
-        recyclerView.setAdapter(adapter);
-
         return v;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        adapter.startListening();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        adapter.stopListening();
-    }
-
-    class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView displayName;
-
-        ViewHolder(View itemView) {
-            super(itemView);
-
-            displayName = itemView.findViewById(R.id.txt_username);
-        }
     }
 
 }
