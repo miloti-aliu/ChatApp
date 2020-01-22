@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Chat App");
 
         firebaseAuth = FirebaseAuth.getInstance();
+        roomAdapter = new RoomAdapter();
+
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms");
 
@@ -82,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(getRooms());
+
 
     }
 
@@ -104,18 +107,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private RoomAdapter getRooms(){
+
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 if (dataSnapshot.exists()) {
                     HashMap<String, Object> dataMap = (HashMap<String, Object>) dataSnapshot.getValue();
-                    roomAdapter = new RoomAdapter();
+
                     for (String key : dataMap.keySet()) {
                         Object data = dataMap.get(key);
                         try {
                             HashMap<String, Object> userData = (HashMap<String, Object>) data;
                             Room room = new Room();
                             room.setRoomname((String)userData.get("room-name"));
+
                             roomAdapter.addRoom(room);
                         } catch (ClassCastException cce) {
                             cce.printStackTrace();
