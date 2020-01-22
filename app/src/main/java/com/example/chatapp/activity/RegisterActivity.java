@@ -1,4 +1,4 @@
-package com.example.chatapp;
+package com.example.chatapp.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.chatapp.R;
 import com.example.chatapp.activity.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -76,13 +77,11 @@ public class RegisterActivity extends AppCompatActivity {
                             and create a new reference in the database with nodes 'User/{USERID}'
                           */
 
-                        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
+                        mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
 
                         HashMap<String, String> userMap = new HashMap<>();
                         userMap.put("id", userId);
                         userMap.put("name", displayName);
-                        userMap.put("status", "default");
-                        userMap.put("image", "default");
 
                         /*
                             Create a HashMap Object and fill it with required fields such as (name, status, image),
@@ -91,12 +90,6 @@ public class RegisterActivity extends AppCompatActivity {
 
                         mDatabase.setValue(userMap).addOnCompleteListener(task1 -> {
                             if (task1.isSuccessful()) {
-
-                                /*
-                                    Check if this task is done successfully,
-                                    then send the user to the Main Screen of Application which is MainActivity
-                                 */
-
                                 Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);

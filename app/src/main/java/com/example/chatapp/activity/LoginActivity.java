@@ -1,4 +1,4 @@
-package com.example.chatapp;
+package com.example.chatapp.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.chatapp.R;
 import com.example.chatapp.activity.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 

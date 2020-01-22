@@ -11,16 +11,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.chatapp.R;
+import com.example.chatapp.adapter.ViewPagerAdapter;
+import com.example.chatapp.fragment.ChatFragment;
+import com.example.chatapp.fragment.UserFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
-
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private Toolbar toolbar;
+    private ViewPagerAdapter viewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +30,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         viewPager =findViewById(R.id.view_pager);
         setupViewPager(viewPager);
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-
         getSupportActionBar().setTitle("Chat App");
+
+        firebaseAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -44,19 +47,17 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.logout){
             firebaseAuth.signOut();
-            startActivity(new Intent(this, com.example.chatapp.StartActivity.class));
+            startActivity(new Intent(this, StartActivity.class));
             finish();
             return true;
         }
         return false;
-
-
-
     }
+
     private void setupViewPager(ViewPager viewPager){
-        com.example.chatapp.ViewPagerAdapter adapter = new com.example.chatapp.ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(com.example.chatapp.UserFragment.getInstance(),"Contacts");
-        adapter.addFragment(com.example.chatapp.ChatFragment.getInstance(),"Chats");
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(UserFragment.getInstance(),"Contacts");
+        adapter.addFragment(ChatFragment.getInstance(),"Chats");
         viewPager.setAdapter(adapter);
     }
 }

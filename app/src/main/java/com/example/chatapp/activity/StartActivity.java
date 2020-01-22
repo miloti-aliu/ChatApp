@@ -1,4 +1,4 @@
-package com.example.chatapp;
+package com.example.chatapp.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.chatapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -22,7 +23,7 @@ public class StartActivity extends AppCompatActivity {
 
     FirebaseUser firebaseUser;
 
-    /*@Override
+    @Override
     protected void onStart() {
         super.onStart();
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -31,7 +32,7 @@ public class StartActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
-    }*/
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +41,8 @@ public class StartActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        loginBtn.setOnClickListener(v -> startActivity(new Intent(StartActivity.this, com.example.chatapp.LoginActivity.class)));
+        loginBtn.setOnClickListener(v -> startActivity(new Intent(StartActivity.this, LoginActivity.class)));
 
-        registerBtn.setOnClickListener(v -> startActivity(new Intent(StartActivity.this, com.example.chatapp.RegisterActivity.class)));
+        registerBtn.setOnClickListener(v -> startActivity(new Intent(StartActivity.this, RegisterActivity.class)));
     }
 }
