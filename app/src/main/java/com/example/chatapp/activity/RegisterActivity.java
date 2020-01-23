@@ -71,7 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                         HashMap<String, String> userMap = new HashMap<>();
                         userMap.put("id", userId);
-                        userMap.put("name", displayName);
+                        userMap.put("displayName", displayName);
 
                         mDatabase.setValue(userMap).addOnCompleteListener(task1 -> {
                             if (task1.isSuccessful()) {

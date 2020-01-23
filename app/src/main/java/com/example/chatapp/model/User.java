@@ -5,13 +5,16 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     private String id;
-    private String username;
+    private String displayName;
     private String email;
 
     public User(String id, String username, String email) {
         this.id = id;
-        this.username = username;
+        this.displayName = username;
         this.email = email;
+    }
+
+    public User() {
     }
 
     public String getId() {
@@ -23,11 +26,11 @@ public class User implements Serializable {
     }
 
     public String getUsername() {
-        return username;
+        return displayName;
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.displayName = username;
     }
 
     public String getEmail() {

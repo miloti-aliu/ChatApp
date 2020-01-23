@@ -1,5 +1,6 @@
 package com.example.chatapp.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +10,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatapp.R;
+import com.example.chatapp.activity.ChatDetailActivity;
+import com.example.chatapp.activity.MainActivity;
 import com.example.chatapp.model.Room;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> {
 
-    ArrayList<Room> rooms = new ArrayList<>();
+    private List<Room> rooms;
+
+    public RoomAdapter(List<Room> rooms){
+        this.rooms = rooms;
+    }
 
     @NonNull
     @Override
@@ -25,15 +33,15 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
         return new MyViewHolder(itemView);
     }
 
-    public void addRoom(Room room){
-        rooms.add(room);
-        notifyItemInserted(rooms.size() - 1);
-    }
-
     @Override
     public void onBindViewHolder(@NonNull RoomAdapter.MyViewHolder holder, int position) {
         holder.roomname.setText(rooms.get(position).getRoomname());
         holder.lastMsg.setText(rooms.get(position).getLastMsg());
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), ChatDetailActivity.class);
+            intent.putExtra("roomId",rooms.get(position).getId());
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override
@@ -44,7 +52,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView roomname;
         TextView lastMsg;
-        public MyViewHolder(@NonNull View itemView) {
+        MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             roomname = itemView.findViewById(R.id.room_name);

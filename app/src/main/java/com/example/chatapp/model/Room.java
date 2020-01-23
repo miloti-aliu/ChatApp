@@ -15,6 +15,8 @@ public class Room implements Serializable {
         this.lastMsg = lastMsg;
     }
 
+    public Room(){}
+
     public String getLastMsg() {
         return lastMsg;
     }
@@ -22,8 +24,6 @@ public class Room implements Serializable {
     public void setLastMsg(String lastMsg) {
         this.lastMsg = lastMsg;
     }
-
-    public Room(){}
 
     public String getId() {
         return id;

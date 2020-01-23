@@ -1,15 +1,20 @@
 package com.example.chatapp.model;
 
-public class Chat {
+import java.io.Serializable;
+
+public class Chat implements Serializable {
 
     private String sender;
-    private String receiver;
+    private String room;
     private String message;
 
     public Chat(String sender, String receiver, String message) {
         this.sender = sender;
-        this.receiver = receiver;
+        this.room = receiver;
         this.message = message;
+    }
+
+    public Chat() {
     }
 
     public String getSender() {
@@ -20,12 +25,12 @@ public class Chat {
         this.sender = sender;
     }
 
-    public String getReceiver() {
-        return receiver;
+    public String getRoom() {
+        return room;
     }
 
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
+    public void setRoom(String room) {
+        this.room = room;
     }
 
     public String getMessage() {

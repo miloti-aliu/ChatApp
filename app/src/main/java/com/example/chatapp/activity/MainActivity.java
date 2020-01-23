@@ -21,10 +21,12 @@ import android.widget.EditText;
 import com.example.chatapp.R;
 
 import com.example.chatapp.adapter.RoomAdapter;
+import com.example.chatapp.model.Chat;
 import com.example.chatapp.model.Room;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,8 +51,12 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.room_recycler)
     RecyclerView recyclerView;
 
+    private List<Room> roomList;
+    private List<String> rooms;
+
     private FirebaseAuth firebaseAuth;
     private DatabaseReference mDatabase;
+
     private RoomAdapter roomAdapter;
 
     @Override
@@ -62,11 +68,30 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Chat App");
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        roomAdapter = new RoomAdapter();
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        rooms = new ArrayList<>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms");
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                rooms.clear();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Room room = ds.getValue(Room.class);
+                    rooms.add(room.getRoomname());
+                }
+                readRooms();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         add.setOnClickListener(v -> {
 
@@ -76,16 +101,35 @@ public class MainActivity extends AppCompatActivity {
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomId);
 
             HashMap<String, String> roomMap = new HashMap<>();
-            roomMap.put("room-name", roomName.getText().toString());
+            roomMap.put("id", roomId);
+            roomMap.put("roomname", roomName.getText().toString());
 
             reference.setValue(roomMap);
         });
+    }
 
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(getRooms());
+    private void readRooms() {
+        roomList = new ArrayList<>();
 
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms");
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                roomList.clear();
 
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Room room = ds.getValue(Room.class);
+                    roomList.add(room);
+                }
+                roomAdapter = new RoomAdapter(roomList);
+                recyclerView.setAdapter(roomAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -104,37 +148,5 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return false;
-    }
-
-    private RoomAdapter getRooms(){
-
-        mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.exists()) {
-                    HashMap<String, Object> dataMap = (HashMap<String, Object>) dataSnapshot.getValue();
-
-                    for (String key : dataMap.keySet()) {
-                        Object data = dataMap.get(key);
-                        try {
-                            HashMap<String, Object> userData = (HashMap<String, Object>) data;
-                            Room room = new Room();
-                            room.setRoomname((String)userData.get("room-name"));
-
-                            roomAdapter.addRoom(room);
-                        } catch (ClassCastException cce) {
-                            cce.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        return  roomAdapter;
     }
 }

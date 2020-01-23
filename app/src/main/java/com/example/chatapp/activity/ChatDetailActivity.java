@@ -3,6 +3,7 @@ package com.example.chatapp.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -37,7 +38,6 @@ public class ChatDetailActivity extends AppCompatActivity {
     @BindView(R.id.username)TextView username;
     @BindView(R.id.sendBtn)ImageButton sendBtn;
     @BindView(R.id.text_send)EditText text;
-    @BindView(R.id.toolbar)Toolbar toolbar;
     @BindView(R.id.rvMessages)RecyclerView recyclerView;
 
     private FirebaseUser user;
@@ -52,21 +52,22 @@ public class ChatDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat_detail);
 
         ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(v -> finish());
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         Intent intent = getIntent();
-        String userId = intent.getStringExtra("userId");
+        String roomId = intent.getStringExtra("roomId");
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference("users").child(userId);
+        reference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomId);
 
         sendBtn.setOnClickListener(v -> {
             String msg = text.getText().toString();
             if(!msg.equals(" ")){
-                sendMessage(user.getDisplayName(), userId, msg);
+                sendMessage(user.getDisplayName(), roomId, msg);
             }
             else {
                 Toast.makeText(this,"Write a message!", Toast.LENGTH_SHORT).show();
@@ -79,7 +80,7 @@ public class ChatDetailActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 username.setText(user.getUsername());
-                readMessages(user.getId(), userId);
+                readMessages(user.getId(), roomId);
             }
 
             @Override
@@ -89,33 +90,30 @@ public class ChatDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void sendMessage(String sender, String receiver, String msg){
+    private void sendMessage(String sender, String room, String msg){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
-        hashMap.put("receiver", receiver);
+        hashMap.put("room", room);
         hashMap.put("message", msg);
 
-        databaseReference.child("chats").push().setValue(hashMap);
+        databaseReference.child("rooms").child(room).child("chats").push().setValue(hashMap);
     }
 
-    private void readMessages(String mId, String userId){
+    private void readMessages(String mId, String roomId){
         chats = new ArrayList<>();
-        reference = FirebaseDatabase.getInstance().getReference("chats");
+        reference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomId).child("chats");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 chats.clear();
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     Chat chat = dataSnapshot1.getValue(Chat.class);
-                    if(chat.getReceiver().equals(mId) && chat.getSender().equals(userId) ||
-                            chat.getSender().equals(mId) && chat.getReceiver().equals(userId)){
-                        chats.add(chat);
-                    }
-                    messageAdapter = new MessageAdapter(ChatDetailActivity.this, chats);
-                    recyclerView.setAdapter(messageAdapter);
+                    chats.add(chat);
                 }
+                messageAdapter = new MessageAdapter(ChatDetailActivity.this, chats);
+                recyclerView.setAdapter(messageAdapter);
             }
 
             @Override
