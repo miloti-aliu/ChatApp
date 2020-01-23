@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.chatapp.R;
 
@@ -95,16 +96,22 @@ public class MainActivity extends AppCompatActivity {
 
         add.setOnClickListener(v -> {
 
-            UUID uuid = UUID.randomUUID();
-            String roomId = String.valueOf(uuid);
+            if (!roomName.getText().toString().trim().equals("")) {
 
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomId);
+                UUID uuid = UUID.randomUUID();
+                String roomId = String.valueOf(uuid);
 
-            HashMap<String, String> roomMap = new HashMap<>();
-            roomMap.put("id", roomId);
-            roomMap.put("roomname", roomName.getText().toString());
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomId);
 
-            reference.setValue(roomMap);
+                HashMap<String, String> roomMap = new HashMap<>();
+                roomMap.put("id", roomId);
+                roomMap.put("roomname", roomName.getText().toString());
+
+                reference.setValue(roomMap);
+            }
+            else{
+                Toast.makeText(this,"Set a name", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

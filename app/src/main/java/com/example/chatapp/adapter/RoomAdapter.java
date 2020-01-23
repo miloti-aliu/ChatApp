@@ -40,6 +40,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), ChatDetailActivity.class);
             intent.putExtra("roomId",rooms.get(position).getId());
+            intent.putExtra("roomName",rooms.get(position).getRoomname());
             v.getContext().startActivity(intent);
         });
     }

@@ -40,7 +40,7 @@ public class ChatDetailActivity extends AppCompatActivity {
     @BindView(R.id.text_send)EditText text;
     @BindView(R.id.rvMessages)RecyclerView recyclerView;
 
-    private FirebaseUser user;
+    private FirebaseUser firebaseUser;
     private DatabaseReference reference;
 
     private MessageAdapter messageAdapter;
@@ -52,22 +52,25 @@ public class ChatDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat_detail);
 
         ButterKnife.bind(this);
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Intent intent = getIntent();
+        String roomId = intent.getStringExtra("roomId");
+        String roomName = intent.getStringExtra("roomName");
+
+        getSupportActionBar().setTitle(roomName);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        Intent intent = getIntent();
-        String roomId = intent.getStringExtra("roomId");
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomId);
 
         sendBtn.setOnClickListener(v -> {
             String msg = text.getText().toString();
-            if(!msg.equals(" ")){
-                sendMessage(user.getDisplayName(), roomId, msg);
+            if(!msg.trim().equals("")){
+                sendMessage(firebaseUser.getUid(), roomId, msg);
             }
             else {
                 Toast.makeText(this,"Write a message!", Toast.LENGTH_SHORT).show();
@@ -80,7 +83,7 @@ public class ChatDetailActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 username.setText(user.getUsername());
-                readMessages(user.getId(), roomId);
+                readMessages(roomId);
             }
 
             @Override
@@ -101,7 +104,7 @@ public class ChatDetailActivity extends AppCompatActivity {
         databaseReference.child("rooms").child(room).child("chats").push().setValue(hashMap);
     }
 
-    private void readMessages(String mId, String roomId){
+    private void readMessages(String roomId){
         chats = new ArrayList<>();
         reference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomId).child("chats");
         reference.addValueEventListener(new ValueEventListener() {
