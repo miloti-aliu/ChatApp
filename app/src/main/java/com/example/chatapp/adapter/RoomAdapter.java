@@ -33,6 +33,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull RoomAdapter.MyViewHolder holder, int position) {
         holder.roomname.setText(rooms.get(position).getRoomname());
+        holder.lastMsg.setText(rooms.get(position).getLastMsg());
     }
 
     @Override
@@ -42,10 +43,12 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView roomname;
+        TextView lastMsg;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             roomname = itemView.findViewById(R.id.room_name);
+            lastMsg = itemView.findViewById(R.id.last_msg);
         }
     }
 }

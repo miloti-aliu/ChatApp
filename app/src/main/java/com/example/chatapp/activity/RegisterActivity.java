@@ -67,7 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
                         FirebaseUser currentUser = mAuth.getCurrentUser();
                         String userId = currentUser.getUid();
 
-                        mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
+                        mDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(userId);
 
                         HashMap<String, String> userMap = new HashMap<>();
                         userMap.put("id", userId);
@@ -75,7 +75,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                         mDatabase.setValue(userMap).addOnCompleteListener(task1 -> {
                             if (task1.isSuccessful()) {
-                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 finish();
