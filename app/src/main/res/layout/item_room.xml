@@ -1,33 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
     android:layout_gravity="center_horizontal"
     android:layout_margin="10dp"
-    android:layout_centerHorizontal="true"
+    android:orientation="vertical"
     app:cardCornerRadius="8dp"
     app:cardElevation="8dp"
     app:cardUseCompatPadding="true">
 
-    <LinearLayout
-        android:layout_margin="16dp"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_gravity="center_horizontal"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
 
-    <TextView
-        android:id="@+id/room_name"
-        android:textColor="@color/colorPrimary"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:text="ROOM 1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_alignParentTop="true"
+            android:id="@+id/room_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ROOM NAME"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:padding="10dp"
+            android:layout_gravity="left"
+            android:textStyle="bold" />
 
-    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/room_name">
+        <TextView
+            android:id="@+id/user_sent_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp"
+            android:text="User"
+            android:textStyle="bold"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/last_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp"
+            android:text="Last Message"
+            android:padding="8dp"/>
+        </LinearLayout>
+
+
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>
