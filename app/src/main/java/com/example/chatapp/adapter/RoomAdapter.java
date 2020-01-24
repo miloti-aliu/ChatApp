@@ -14,15 +14,18 @@ import com.example.chatapp.activity.ChatDetailActivity;
 import com.example.chatapp.activity.MainActivity;
 import com.example.chatapp.model.Room;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> {
 
-    private List<Room> rooms;
+    private List<Room> rooms = new ArrayList<>();
+    private String lastMessage;
 
-    public RoomAdapter(List<Room> rooms){
-        this.rooms = rooms;
+    public RoomAdapter(){
+
     }
 
     @NonNull
@@ -35,14 +38,12 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull RoomAdapter.MyViewHolder holder, int position) {
-        holder.roomname.setText(rooms.get(position).getRoomname());
-        holder.lastMsg.setText(rooms.get(position).getLastMsg());
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), ChatDetailActivity.class);
-            intent.putExtra("roomId",rooms.get(position).getId());
-            intent.putExtra("roomName",rooms.get(position).getRoomname());
-            v.getContext().startActivity(intent);
-        });
+        holder.fillView(rooms.get(position));
+    }
+
+    public void addRoom(Room room){
+        rooms.add(room);
+        notifyItemInserted(getItemCount());
     }
 
     @Override
@@ -58,6 +59,17 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
 
             roomname = itemView.findViewById(R.id.room_name);
             lastMsg = itemView.findViewById(R.id.last_msg);
+        }
+
+        void fillView(Room room) {
+            roomname.setText(room.getRoomname());
+            lastMsg.setText(room.getLastMsg());
+            itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(v.getContext(), ChatDetailActivity.class);
+                intent.putExtra("roomId",room.getId());
+                intent.putExtra("roomName",room.getRoomname());
+                v.getContext().startActivity(intent);
+            });
         }
     }
 }

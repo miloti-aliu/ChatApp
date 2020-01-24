@@ -14,40 +14,44 @@ import com.example.chatapp.model.Chat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
 
-    public static final int MESSAGE_LEFT = 0;
-    public static final int MESSAGE_RIGHT = 1;
+    private static final int MESSAGE_LEFT = 0;
+    private static final int MESSAGE_RIGHT = 1;
 
-    private FirebaseUser user;
-    private Context mContext;
-    private List<Chat> chats;
+    private List<Chat> chats = new ArrayList<>();
 
-    public MessageAdapter(Context mContext, List<Chat> chats) {
-        this.mContext = mContext;
-        this.chats = chats;
-    }
+    public MessageAdapter(){    }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == MESSAGE_RIGHT){
-            View view = LayoutInflater.from(mContext).inflate(R.layout.chat_item_right, parent, false);
-            return new ViewHolder(view);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_right, parent, false);
+            return new ViewHolder(view, viewType);
         }
         else {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.chat_item_left, parent, false);
-            return new ViewHolder(view);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_left, parent, false);
+            return new ViewHolder(view, viewType);
         }
+    }
+
+    public void addChat(Chat chat){
+        chats.add(chat);
+        notifyItemInserted(chats.size()-1);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Chat chat = chats.get(position);
-
-        holder.show_message.setText(chat.getMessage());
+        if(holder.value == 0){
+            holder.fillReceiverView(chats.get(position));
+        }
+        else {
+            holder.fillSenderView(chats.get(position));
+        }
     }
 
     @Override
@@ -57,7 +61,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(chats.get(position).getSender().equals(user.getUid())){
             return MESSAGE_RIGHT;
         }
@@ -68,11 +72,29 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder {
         private TextView show_message;
+        private TextView user;
+        private int value;
 
-        ViewHolder(View view){
+        ViewHolder(View view, int value){
             super(view);
+            this.value = value;
 
-            show_message = view.findViewById(R.id.show_message);
+            if(this.value == 0){
+                show_message = view.findViewById(R.id.show_message);
+                user = view.findViewById(R.id.user);
+            }
+            else {
+                show_message = view.findViewById(R.id.show_message);
+            }
+        }
+
+        void fillSenderView(Chat chat) {
+            show_message.setText(chat.getMessage());
+        }
+
+        void fillReceiverView(Chat chat) {
+            show_message.setText(chat.getMessage());
+            user.setText(chat.getSender());
         }
     }
 }

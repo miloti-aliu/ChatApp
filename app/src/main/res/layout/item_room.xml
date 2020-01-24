@@ -35,6 +35,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_below="@+id/room_name">
+
         <TextView
             android:id="@+id/user_sent_msg"
             android:layout_width="wrap_content"
@@ -55,7 +56,6 @@
             android:text="Last Message"
             android:padding="8dp"/>
         </LinearLayout>
-
 
     </RelativeLayout>
 

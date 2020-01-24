@@ -4,7 +4,17 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
+    <TextView
+        android:id="@+id/user"
+        android:layout_marginLeft="5dp"
+        android:padding="2dp"
+        android:text="User"
+        android:textSize="10sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <RelativeLayout
+        android:layout_below="@+id/user"
         android:layout_width="300dp"
         android:layout_height="wrap_content">
 

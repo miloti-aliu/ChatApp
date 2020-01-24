@@ -1,6 +1,7 @@
 package com.example.chatapp.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import com.example.chatapp.model.Chat;
 import com.example.chatapp.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -44,7 +47,6 @@ public class ChatDetailActivity extends AppCompatActivity {
     private DatabaseReference reference;
 
     private MessageAdapter messageAdapter;
-    private List<Chat> chats;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +61,7 @@ public class ChatDetailActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle(roomName);
 
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
+        bindAdapter();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomId);
@@ -78,11 +77,9 @@ public class ChatDetailActivity extends AppCompatActivity {
             text.setText("");
         });
 
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                username.setText(user.getUsername());
                 readMessages(roomId);
             }
 
@@ -91,6 +88,13 @@ public class ChatDetailActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void bindAdapter() {
+        messageAdapter = new MessageAdapter();
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(messageAdapter);
     }
 
     private void sendMessage(String sender, String room, String msg){
@@ -105,18 +109,28 @@ public class ChatDetailActivity extends AppCompatActivity {
     }
 
     private void readMessages(String roomId){
-        chats = new ArrayList<>();
         reference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomId).child("chats");
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                chats.clear();
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    Chat chat = dataSnapshot1.getValue(Chat.class);
-                    chats.add(chat);
-                }
-                messageAdapter = new MessageAdapter(ChatDetailActivity.this, chats);
-                recyclerView.setAdapter(messageAdapter);
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Chat chat = dataSnapshot.getValue(Chat.class);
+                messageAdapter.addChat(chat);
+                recyclerView.smoothScrollToPosition(messageAdapter.getItemCount());
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override
