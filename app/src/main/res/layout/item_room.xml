@@ -53,7 +53,6 @@
             android:textColor="@color/colorPrimary"
             android:textSize="15sp"
             android:maxLines="1"
-            android:text="Last Message"
             android:padding="8dp"/>
         </LinearLayout>
 

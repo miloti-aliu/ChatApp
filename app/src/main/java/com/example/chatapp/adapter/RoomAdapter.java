@@ -19,18 +19,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> {
 
-    private List<Room> rooms;
+    private List<Room> rooms = new ArrayList<>();
+    private String theLastMessage;
 
-
-    String theLastMessage;
-
-    public RoomAdapter(List<Room> rooms) {
-        this.rooms = rooms;
-    }
+    public RoomAdapter() {  }
 
     @NonNull
     @Override
@@ -42,23 +39,17 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull RoomAdapter.MyViewHolder holder, int position) {
-
-        final Room room = rooms.get(position);
-
-        holder.roomname.setText(rooms.get(position).getRoomname());
-
-        lastMessage(room.getId(), holder.last_Msg);
-
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), ChatDetailActivity.class);
-            intent.putExtra("roomId", rooms.get(position).getId());
-            v.getContext().startActivity(intent);
-        });
+        holder.fillView(rooms.get(position));
     }
 
     @Override
     public int getItemCount() {
         return rooms.size();
+    }
+
+    public void addRoom(Room room){
+        rooms.add(room);
+        notifyItemInserted(getItemCount()-1);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
@@ -71,6 +62,18 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
             roomname = itemView.findViewById(R.id.room_name);
             last_Msg = itemView.findViewById(R.id.last_msg);
         }
+
+        void fillView(Room room) {
+            roomname.setText(room.getRoomname());
+
+            lastMessage(room.getId(), last_Msg);
+
+            itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(v.getContext(), ChatDetailActivity.class);
+                intent.putExtra("roomId", room.getId());
+                v.getContext().startActivity(intent);
+            });
+        }
     }
 
     private void lastMessage(String roomid, TextView last_msg) {
@@ -82,14 +85,10 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 theLastMessage = dataSnapshot.child("message").getValue().toString();
-                switch (theLastMessage) {
-                    case "default":
-                        last_msg.setText("No Message");
-                        break;
-
-                    default:
-                        last_msg.setText(theLastMessage);
-                        break;
+                if ("default".equals(theLastMessage)) {
+                    last_msg.setText("No Message");
+                } else {
+                    last_msg.setText(theLastMessage);
                 }
                 theLastMessage = "default";
             }
