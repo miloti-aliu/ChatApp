@@ -26,6 +26,8 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
 
     private List<Room> rooms = new ArrayList<>();
     private String theLastMessage;
+    private String theLastSender;
+
 
     public RoomAdapter() {  }
 
@@ -55,18 +57,19 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView roomname;
         TextView last_Msg;
+        TextView lastSender;
 
         MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             roomname = itemView.findViewById(R.id.room_name);
             last_Msg = itemView.findViewById(R.id.last_msg);
+            lastSender=itemView.findViewById(R.id.user_sent_msg);
         }
 
         void fillView(Room room) {
             roomname.setText(room.getRoomname());
-
-            lastMessage(room.getId(), last_Msg);
+            lastMessage(room.getId(), last_Msg, lastSender);
 
             itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(v.getContext(), ChatDetailActivity.class);
@@ -77,7 +80,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
         }
     }
 
-    private void lastMessage(String roomid, TextView last_msg) {
+    private void lastMessage(String roomid, TextView last_msg, TextView last_sender) {
 
         theLastMessage = "default";
         Query query = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomid).child("chats").orderByKey().limitToLast(1);
@@ -86,10 +89,12 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 theLastMessage = dataSnapshot.child("message").getValue().toString();
+                theLastSender = dataSnapshot.child("senderName").getValue().toString();
                 if ("default".equals(theLastMessage)) {
                     last_msg.setText("No Message");
                 } else {
                     last_msg.setText(theLastMessage);
+                    last_sender.setText(theLastSender);
                 }
                 theLastMessage = "default";
             }

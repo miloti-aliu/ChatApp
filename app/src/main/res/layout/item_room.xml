@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimary"
             android:textSize="15sp"
-            android:text="User"
+            android:text=""
             android:textStyle="bold"
             android:padding="8dp"/>
 
@@ -50,6 +50,7 @@
             android:id="@+id/last_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="No message"
             android:textColor="@color/colorPrimary"
             android:textSize="15sp"
             android:maxLines="1"

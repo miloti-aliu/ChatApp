@@ -77,6 +77,7 @@ public class ChatDetailActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         senderName = dataSnapshot.child(firebaseUser.getUid()).child("displayName").getValue().toString();
+                        sendMessage(firebaseUser.getUid(), roomId, msg, senderName);
                     }
 
                     @Override
@@ -84,7 +85,7 @@ public class ChatDetailActivity extends AppCompatActivity {
 
                     }
                 });
-                sendMessage(firebaseUser.getUid(), roomId, msg, senderName);
+
             }
             else {
                 Toast.makeText(this,"Write a message!", Toast.LENGTH_SHORT).show();
