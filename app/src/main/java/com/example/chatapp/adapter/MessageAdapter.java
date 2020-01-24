@@ -1,6 +1,5 @@
 package com.example.chatapp.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +93,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         void fillReceiverView(Chat chat) {
             show_message.setText(chat.getMessage());
-            user.setText(chat.getSender());
+            user.setText(chat.getSenderName());
         }
     }
 }

@@ -26,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -38,13 +39,14 @@ import butterknife.ButterKnife;
 
 public class ChatDetailActivity extends AppCompatActivity {
 
-    @BindView(R.id.username)TextView username;
     @BindView(R.id.sendBtn)ImageButton sendBtn;
     @BindView(R.id.text_send)EditText text;
     @BindView(R.id.rvMessages)RecyclerView recyclerView;
 
     private FirebaseUser firebaseUser;
     private DatabaseReference reference;
+    private DatabaseReference ref;
+    private String senderName;
 
     private MessageAdapter messageAdapter;
 
@@ -64,12 +66,25 @@ public class ChatDetailActivity extends AppCompatActivity {
         bindAdapter();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        ref = FirebaseDatabase.getInstance().getReference().child("users");
+
         reference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomId);
 
         sendBtn.setOnClickListener(v -> {
             String msg = text.getText().toString();
             if(!msg.trim().equals("")){
-                sendMessage(firebaseUser.getUid(), roomId, msg);
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        senderName = dataSnapshot.child(firebaseUser.getUid()).child("displayName").getValue().toString();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                sendMessage(firebaseUser.getUid(), roomId, msg, senderName);
             }
             else {
                 Toast.makeText(this,"Write a message!", Toast.LENGTH_SHORT).show();
@@ -84,9 +99,7 @@ public class ChatDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) {     }
         });
     }
 
@@ -97,13 +110,14 @@ public class ChatDetailActivity extends AppCompatActivity {
         recyclerView.setAdapter(messageAdapter);
     }
 
-    private void sendMessage(String sender, String room, String msg){
+    private void sendMessage(String sender, String room, String msg, String senderName){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
         hashMap.put("room", room);
         hashMap.put("message", msg);
+        hashMap.put("senderName", senderName);
 
         databaseReference.child("rooms").child(room).child("chats").push().setValue(hashMap);
     }
