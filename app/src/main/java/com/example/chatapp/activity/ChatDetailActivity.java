@@ -77,7 +77,7 @@ public class ChatDetailActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         senderName = dataSnapshot.child(firebaseUser.getUid()).child("displayName").getValue().toString();
-                        sendMessage(firebaseUser.getUid(), roomId, msg, senderName);
+                        sendMessage(firebaseUser.getUid(), roomId, Encrypt(msg,"TEST"), senderName);
                     }
 
                     @Override
@@ -111,8 +111,25 @@ public class ChatDetailActivity extends AppCompatActivity {
         recyclerView.setAdapter(messageAdapter);
     }
 
+    public String Encrypt (String text, String key)
+    {
+        String res = "";
+        text = text.toUpperCase();
+        for (int i = 0, j = 0; i < text.length(); i++)
+        {
+            char c = text.charAt(i);
+            if (c < 0 || c > '`')
+                continue;
+            res +=  (char) ((c + key.charAt(j) - 2 * 0) % '`' + 0);
+            j = ++j % key.length();
+        }
+        return res.toLowerCase();
+    }
+
     private void sendMessage(String sender, String room, String msg, String senderName){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
