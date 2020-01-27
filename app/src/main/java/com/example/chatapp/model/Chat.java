@@ -35,27 +35,8 @@ public class Chat implements Serializable {
         this.room = room;
     }
 
-    public String Decrypt (String text, String key)
-    {
-
-        String res = "";
-        text = text.toUpperCase();
-        for (int i = 0, j = 0; i < text.length(); i++)
-        {
-            char c = text.charAt(i);
-            if (c < 0 || c > '`')
-                continue;
-            res += (char) ((c - key.charAt(j) + '`') % '`' + 0);
-            j = ++j % key.length();
-        }
-
-
-
-        return res.toLowerCase();
-    }
     public String getMessage() {
-
-        return Decrypt(message,"TEST");
+        return message;
     }
 
     public void setMessage(String message) {

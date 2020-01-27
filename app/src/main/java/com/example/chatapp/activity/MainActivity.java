@@ -12,6 +12,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,23 +74,15 @@ public class MainActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         add.setOnClickListener(v -> {
+            addRoom();
+        });
 
-            if (!roomName.getText().toString().trim().equals("")) {
-
-                UUID uuid = UUID.randomUUID();
-                String roomId = String.valueOf(uuid);
-
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomId);
-
-                HashMap<String, String> roomMap = new HashMap<>();
-                roomMap.put("id", roomId);
-                roomMap.put("roomname", roomName.getText().toString());
-
-                reference.setValue(roomMap);
-            } else {
-                Toast.makeText(this, "Set a name", Toast.LENGTH_SHORT).show();
+        roomName.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                addRoom();
+                return true;
             }
-            roomName.setText("");
+            return false;
         });
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms");
@@ -104,6 +97,25 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void addRoom() {
+        if (!roomName.getText().toString().trim().equals("")) {
+
+            UUID uuid = UUID.randomUUID();
+            String roomId = String.valueOf(uuid);
+
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomId);
+
+            HashMap<String, String> roomMap = new HashMap<>();
+            roomMap.put("id", roomId);
+            roomMap.put("roomname", roomName.getText().toString());
+
+            reference.setValue(roomMap);
+        } else {
+            Toast.makeText(this, "Set a name", Toast.LENGTH_SHORT).show();
+        }
+        roomName.setText("");
     }
 
     private void bindAdapter() {
