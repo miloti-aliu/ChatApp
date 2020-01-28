@@ -59,9 +59,7 @@ public class ChatDetailActivity extends AppCompatActivity {
     private MessageAdapter messageAdapter;
 
     private Uri filePath;
-    private StorageTask uploadTask;
     private final int PICK_IMAGE_REQUEST = 7;
-    private String myUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

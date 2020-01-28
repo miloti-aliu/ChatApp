@@ -32,7 +32,7 @@
 
         <ImageButton
             android:id="@+id/upload_image"
-            android:background="@drawable/ic_action_file"
+            android:background="@drawable/ic_action_image"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_width="40dp"
