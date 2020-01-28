@@ -6,10 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -25,8 +27,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,6 +46,8 @@ public class ChatDetailActivity extends AppCompatActivity {
     EditText text;
     @BindView(R.id.rvMessages)
     RecyclerView recyclerView;
+    @BindView(R.id.upload_image)
+    ImageButton imageButton;
 
     private FirebaseUser firebaseUser;
     private DatabaseReference reference;
@@ -48,6 +57,11 @@ public class ChatDetailActivity extends AppCompatActivity {
     private String roomName;
 
     private MessageAdapter messageAdapter;
+
+    private Uri filePath;
+    private StorageTask uploadTask;
+    private final int PICK_IMAGE_REQUEST = 7;
+    private String myUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,15 +83,17 @@ public class ChatDetailActivity extends AppCompatActivity {
 
         reference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomId);
 
-        sendBtn.setOnClickListener(v -> submit());
+        sendBtn.setOnClickListener(v -> submit(text.getText().toString()));
 
         text.setOnKeyListener((v, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                submit();
+                submit(text.getText().toString());
                 return true;
             }
             return false;
         });
+
+        imageButton.setOnClickListener(v -> chooseImage());
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -91,8 +107,34 @@ public class ChatDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void submit() {
-        String msg = text.getText().toString();
+    private void chooseImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select image"), PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            filePath = data.getData();
+            String image = filePath.getLastPathSegment();
+            UUID uuid = UUID.randomUUID();
+            String imageId = String.valueOf(uuid);
+            String file = image + imageId + "." + getFileExtension(filePath);
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("images").child(file);
+            storageReference.putFile(filePath).addOnSuccessListener((UploadTask.TaskSnapshot taskSnapshot) -> submit(file));
+        }
+    }
+
+    private String getFileExtension(Uri filePath) {
+        ContentResolver contentResolver = getApplicationContext().getContentResolver();
+        MimeTypeMap map = MimeTypeMap.getSingleton();
+        return map.getExtensionFromMimeType(contentResolver.getType(filePath));
+    }
+
+    private void submit(String msg) {
         if (!msg.trim().equals("")) {
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override

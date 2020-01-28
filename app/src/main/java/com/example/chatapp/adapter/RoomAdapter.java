@@ -29,7 +29,8 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
     private String theLastSender;
 
 
-    public RoomAdapter() {  }
+    public RoomAdapter() {
+    }
 
     @NonNull
     @Override
@@ -49,9 +50,9 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
         return rooms.size();
     }
 
-    public void addRoom(Room room){
+    public void addRoom(Room room) {
         rooms.add(room);
-        notifyItemInserted(getItemCount()-1);
+        notifyItemInserted(getItemCount() - 1);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
@@ -64,7 +65,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
 
             roomname = itemView.findViewById(R.id.room_name);
             last_Msg = itemView.findViewById(R.id.last_msg);
-            lastSender=itemView.findViewById(R.id.user_sent_msg);
+            lastSender = itemView.findViewById(R.id.user_sent_msg);
         }
 
         void fillView(Room room) {
@@ -90,7 +91,10 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 theLastMessage = dataSnapshot.child("message").getValue().toString();
                 theLastSender = dataSnapshot.child("senderName").getValue().toString();
-                if ("default".equals(theLastMessage)) {
+                if (theLastMessage.endsWith(".jpg") || theLastMessage.endsWith(".png")) {
+                    last_msg.setText("Photo message");
+                    last_sender.setText(theLastSender);
+                } else if ("default".equals(theLastMessage)) {
                     last_msg.setText("No Message");
                 } else {
                     last_msg.setText(theLastMessage);
@@ -101,22 +105,18 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
