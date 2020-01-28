@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.chatapp.R;
 import com.example.chatapp.adapter.MessageAdapter;
 import com.example.chatapp.model.Chat;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -122,7 +123,9 @@ public class ChatDetailActivity extends AppCompatActivity {
             String imageId = String.valueOf(uuid);
             String file = image + imageId + "." + getFileExtension(filePath);
             StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("images").child(file);
-            storageReference.putFile(filePath).addOnSuccessListener((UploadTask.TaskSnapshot taskSnapshot) -> submit(file));
+            storageReference.putFile(filePath).addOnSuccessListener((UploadTask.TaskSnapshot taskSnapshot) -> {
+                storageReference.getDownloadUrl().addOnSuccessListener(uri -> submit(uri.toString()));
+            });
         }
     }
 

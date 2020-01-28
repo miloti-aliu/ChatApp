@@ -93,7 +93,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.VH> {
         @Override
         void fillView(Chat chat) {
             if (chat.getMessage().endsWith(".jpg") || chat.getMessage().endsWith(".png")) {
-                reference.child(chat.getMessage()).getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(imageView));
+//                reference.child(chat.getMessage()).getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(imageView));
+                Picasso.get().load(chat.getMessage()).into(imageView);
                 show_message.setVisibility(View.GONE);
             } else {
                 show_message.setText(chat.getMessage());
@@ -117,8 +118,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.VH> {
 
         @Override
         void fillView(Chat chat) {
-            if (chat.getMessage().endsWith(".jpg") || chat.getMessage().endsWith(".png")) {
-                reference.child(chat.getMessage()).getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(imageView));
+            if (chat.getMessage().contains(".jpg") || chat.getMessage().contains(".png")) {
+                Picasso.get().load(chat.getMessage()).into(imageView);
+//                reference.child(chat.getMessage()).getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(imageView));
                 show_message.setVisibility(View.GONE);
             } else {
                 show_message.setText(chat.getMessage());

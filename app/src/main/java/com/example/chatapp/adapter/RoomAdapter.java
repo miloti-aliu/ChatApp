@@ -91,7 +91,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 theLastMessage = dataSnapshot.child("message").getValue().toString();
                 theLastSender = dataSnapshot.child("senderName").getValue().toString();
-                if (theLastMessage.endsWith(".jpg") || theLastMessage.endsWith(".png")) {
+                if (theLastMessage.contains(".jpg") || theLastMessage.contains(".png")) {
                     last_msg.setText("Photo message");
                     last_sender.setText(theLastSender);
                 } else if ("default".equals(theLastMessage)) {
